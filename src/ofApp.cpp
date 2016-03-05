@@ -87,8 +87,8 @@ void ofApp::setup(){
         std::string affdexLicense = "{\"token\":\"fb33ef9bfb195dac7a5c0b286633084df80974ecc9b36aae39ca3ba56921f815\",\"licensor\":\"Affectiva Inc.\",\"expires\":\"2099-01-01\",\"developerId\":\"Affectiva-internal\",\"software\":\"Affdex SDK\"}";
 
         //path DATA_FOLDER = "/Users/dmcduff/src/affdexface/data";
-        
         path DATA_FOLDER = "/Users/dmcduff/src/of_v20150910_osx_release/apps/myApps/affectiva-hackathon_rev02/bin/data/affdex-windows-sdk-iOS/data";
+        ///path DATA_FOLDER = "/Users/dmcduff/src/of_v20150910_osx_release/apps/myApps/emotionlab-hackathon/affdex-native/data";
 
         const std::vector<int> DEFAULT_RESOLUTION{ 640, 480 };
         std::vector<int> resolution;
@@ -160,8 +160,12 @@ void ofApp::draw(){
     
     string player_1 = "Player 1";
     string player_2 = "Player 2";
+    
+    ofSetColor(255,0,0);
     myfontLarge.drawString(player_1, 20, 50);
+    ofSetColor(0,0,255);
     myfontLarge.drawString(player_2, 20+windowWidth/2, 50);
+    ofSetColor(255);
     
     int facesSize = facesMap.size();
     std::cout << "No. of faces: " << facesSize << std::endl;
@@ -184,35 +188,54 @@ void ofApp::draw(){
         VecFeaturePoint points = f.featurePoints;
         float prev_x=0;
         float prev_y=0;
+        
+        float face_x1;
+        float face_y1;
+        float face_x2;
+        float face_y2;
+        float face_x3;
+        float face_y3;
+        
         int count=0;
         ofSetColor(255);
+        ofNoFill();
         for (auto& point : points)	//Draw face feature points.
         {
             
             if(count==5){
-                float face_x1 = point.x;
-                float face_y1 = point.y;
+                //ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
+                face_x1 = point.x/widthRecal;
+                face_y1 = point.y/heightRecal;
             }
             else if(count==10){
-                float face_x2 = point.x;
-                float face_y2 = point.y;
+                //ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
+                face_x2 = point.x/widthRecal;
+                face_y2 = point.y/heightRecal;
             }
             else if(count==2){
-                
+                //ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
+                face_x3 = point.x/widthRecal;
+                face_y3 = point.y/heightRecal;
             }
-            ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
-
             
             if(count==5){
-                ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
+                //ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
 
                 head_motion = (point.y-temp_x)*(point.y-temp_x);
                 prev_x = point.x;
                 prev_y = point.y;
                 temp_x = point.y;
             }
+            count++;
             
         }
+        if(face_x1<windowWidth/2){
+            ofSetColor(255,0,0);
+        }
+        else{
+            ofSetColor(0,0,255);
+        }
+        ofRect(face_x1, face_y1-0.2*(face_y3-face_y1), face_x2-face_x1, 1.2*(face_y3-face_y1));
         
         count=0;
         
