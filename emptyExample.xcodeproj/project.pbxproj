@@ -43,7 +43,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		C3693ED41BEEC357009B4BF0 /* libaffdex-native.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libaffdex-native.dylib"; path = "../../../../../../install/lib/libaffdex-native.dylib"; sourceTree = "<group>"; };
 		C3FCCD7A1BF0060E0052B4C1 /* affdex-native */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "affdex-native"; sourceTree = "<group>"; };
 		C3FCCD7B1BF006300052B4C1 /* libaffdex-native.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libaffdex-native.dylib"; path = "affdex-native/lib/libaffdex-native.dylib"; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -96,7 +95,6 @@
 			children = (
 				C3FCCD7B1BF006300052B4C1 /* libaffdex-native.dylib */,
 				C3FCCD7A1BF0060E0052B4C1 /* affdex-native */,
-				C3693ED41BEEC357009B4BF0 /* libaffdex-native.dylib */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,

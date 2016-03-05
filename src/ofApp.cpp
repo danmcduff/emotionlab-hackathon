@@ -107,7 +107,7 @@ void ofApp::setup(){
 	
     try
     {
-        std::string affdexLicense = "{\"token\":\"\",\"licensor\":\"Affectiva Inc.\",\"expires\":\"2099-01-01\",\"developerId\":\"Affectiva-internal\",\"software\":\"Affdex SDK\"}";
+        std::string affdexLicense = "{\"token\":\"fb33ef9bfb195dac7a5c0b286633084df80974ecc9b36aae39ca3ba56921f815\",\"licensor\":\"Affectiva Inc.\",\"expires\":\"2099-01-01\",\"developerId\":\"Affectiva-internal\",\"software\":\"Affdex SDK\"}";
 
 //        path DATA_FOLDER = "data";
 		//path DATA_FOLDER = "/Users/dmcduff/src/of_v20150910_osx_release/apps/myApps/affectiva-hackathon_rev02/bin/data/affdex-windows-sdk-iOS/data";
@@ -594,5 +594,12 @@ std::vector<std::string> random_sample( const std::vector<std::string>& src_list
 
 void ofApp::pavlokEvent(int player_no)
 {
-
+    if(player_no==1)
+    {
+        ofHttpResponse resp = ofLoadURL("https://pavlok.herokuapp.com/api/YAjnVJWw1z/vibro/255");
+    }
+    else if(player_no==2)
+    {
+        ofHttpResponse resp = ofLoadURL("https://pavlok.herokuapp.com/api/jhn3gGBxgN/vibro/255");
+    }
 }
