@@ -35,27 +35,14 @@ auto start_time = std::chrono::system_clock::now();
 float head_motion = -1.0f;
 float temp_x = -1.0f;
 
-bool Player_1_objective;
-bool Player_2_objective;
-
-std::vector< bool > player1_objective;
-std::vector< bool > player2_objective;
-std::vector< std::string> expression_objective;
-int player1_index = -1;
-int player2_index = -1;
-
 bool endGame = false;
 int winning_player = 0;
-
-std::vector<std::string> possible_expression_objectives{"smile", "browRaise", "browFurrow" , "lipCornerDepressor", "smirk", "lipPucker"};
 
 std::vector<std::string> expressions{"smile", "innerBrowRaise", "browRaise", "browFurrow" , "noseWrinkle",
     "upperLipRaise", "lipCornerDepressor", "chinRaise", "lipPucker", "lipPress",
     "lipSuck", "mouthOpen", "smirk", "eyeClosure"};
 
 std::vector<std::string> emotions{"joy", "fear", "disgust", "sadness", "anger", "surprise", "contempt","valence", "engagement" };
-
-std::map< std::string, ofImage > expression_image_lookup;
 
 Face f;
 int no_faces;
@@ -99,7 +86,22 @@ void ofApp::setup(){
     //ofSetDataPathRoot("../Resources/data/");
 	
 	// Setup the game objectives
-	expression_objective = random_sample( possible_expression_objectives, 5 );
+    expression_image_lookup.clear();
+    expression_image_lookup[ "smile" ].load("images/smile.png");
+    expression_image_lookup[ "smirk" ].load("images/smirk.png");
+    expression_image_lookup[ "lipPucker" ].load("images/lipPucker.png");
+    expression_image_lookup[ "lipCornerDepressor" ].load("images/lipDepressor.png");
+    expression_image_lookup[ "browFurrow" ].load("images/browFurrow.png");
+    expression_image_lookup[ "browRaise" ].load("images/browRaise.png");
+    expression_image_lookup[ "mouthOpen" ].load("images/mouthOpen.png");
+    expression_image_lookup[ "eyeClosure" ].load("images/eyeClosure.png");
+
+    std::vector<std::string> possible_expression_objectives;
+    for( const auto& exp_lookup_pair : expression_image_lookup )
+    {
+        possible_expression_objectives.push_back( exp_lookup_pair.first );
+    }
+	expression_objective = random_sample( possible_expression_objectives, 7 );
 	player1_objective = std::vector< bool >( expression_objective.size(), true );
 	player2_objective = std::vector< bool >( expression_objective.size(), true );
 	player1_index = 0;
@@ -107,7 +109,7 @@ void ofApp::setup(){
 	
     try
     {
-        std::string affdexLicense = "{\"token\":\"fb33ef9bfb195dac7a5c0b286633084df80974ecc9b36aae39ca3ba56921f815\",\"licensor\":\"Affectiva Inc.\",\"expires\":\"2099-01-01\",\"developerId\":\"Affectiva-internal\",\"software\":\"Affdex SDK\"}";
+        std::string affdexLicense = "{\"token\":\"\",\"licensor\":\"Affectiva Inc.\",\"expires\":\"2099-01-01\",\"developerId\":\"Affectiva-internal\",\"software\":\"Affdex SDK\"}";
 
 //        path DATA_FOLDER = "data";
 		//path DATA_FOLDER = "/Users/dmcduff/src/of_v20150910_osx_release/apps/myApps/affectiva-hackathon_rev02/bin/data/affdex-windows-sdk-iOS/data";
@@ -143,22 +145,6 @@ void ofApp::setup(){
     {
         std::cerr << "An Exception occurred: " << exception.getExceptionMessage() << std::endl;
     }
-    
-    browFurrowImg.load("images/browFurrow.png");
-    browRaiseImg.load("images/browRaise.png");
-    lipDepressorImg.load("images/lipDepressor.png");
-    lipPuckerImg.load("images/lipPucker.png");
-    smileImg.load("images/smile.png");
-    smirkImg.load("images/smirk.png");
-    
-    expression_image_lookup[ "smile" ] = smileImg;
-    expression_image_lookup[ "smirk" ] = smirkImg;
-    expression_image_lookup[ "lipPucker" ] = lipPuckerImg;
-    expression_image_lookup[ "lipCornerDepressor" ] = lipDepressorImg;
-    expression_image_lookup[ "browFurrow" ] = browFurrowImg;
-    expression_image_lookup[ "browRaise" ] = browRaiseImg;
-
-    
 }
 
 //--------------------------------------------------------------
@@ -269,7 +255,7 @@ void ofApp::draw(){
         }
 		
 		// Determine player and perform player specific logic
-		const bool is_player1 = face_x1 < windowWidth/2;
+		const bool is_player1 = (face_x1+face_x2+face_x3)/3.0f < windowWidth/2;
 		if( is_player1 ){
             ofSetColor(255,0,0);
         }
@@ -594,12 +580,4 @@ std::vector<std::string> random_sample( const std::vector<std::string>& src_list
 
 void ofApp::pavlokEvent(int player_no)
 {
-    if(player_no==1)
-    {
-        ofHttpResponse resp = ofLoadURL("https://pavlok.herokuapp.com/api/YAjnVJWw1z/vibro/255");
-    }
-    else if(player_no==2)
-    {
-        ofHttpResponse resp = ofLoadURL("https://pavlok.herokuapp.com/api/jhn3gGBxgN/vibro/255");
-    }
 }
