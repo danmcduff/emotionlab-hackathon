@@ -1,7 +1,0 @@
-{
-  "token": "f1a329b52f77a99b7d081d7b0af794740125a07be8f6810e76f1ff40fab19890",  
-  "licensor": "Affectiva Inc.",  
-  "expires": "2099-01-01",  
-  "developerId": "unittest",  
-  "software": "Affdex SDK"
-}
