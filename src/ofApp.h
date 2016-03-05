@@ -48,7 +48,7 @@ class ofApp : public ofBaseApp, public affdex::ImageListener{
 		void gotMessage(ofMessage msg);
     
         string mapExpressionName(string expression);
-        void pavlokEvent();
+        void pavlokEvent(int player_no);
     
         shared_ptr<CameraDetector> detector;
         shared_ptr<ImageListener> listenPtr;
@@ -73,6 +73,13 @@ class ofApp : public ofBaseApp, public affdex::ImageListener{
     
         vector<float> nums;
         vector<float> nums_smoothed;
+    
+        ofImage browFurrowImg;
+        ofImage browRaiseImg;
+        ofImage lipDepressorImg;
+        ofImage smirkImg;
+        ofImage lipPuckerImg;
+        ofImage smileImg;
 
     
 };

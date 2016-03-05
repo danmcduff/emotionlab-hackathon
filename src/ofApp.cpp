@@ -1,6 +1,7 @@
 #include "ofApp.h"
 
 #include <iostream>
+#include <random>
 
 #include "ProcessStatusListener.h"
 #include "AffdexException.h"
@@ -37,20 +38,31 @@ float temp_x = -1.0f;
 bool Player_1_objective;
 bool Player_2_objective;
 
+std::vector< bool > player1_objective;
+std::vector< bool > player2_objective;
+std::vector< std::string> expression_objective;
+int player1_index = -1;
+int player2_index = -1;
+
+std::vector<std::string> possible_expression_objectives{"smile", "browRaise", "browFurrow" , "lipCornerDepressor", "smirk", "lipPucker"};
+
 std::vector<std::string> expressions{"smile", "innerBrowRaise", "browRaise", "browFurrow" , "noseWrinkle",
     "upperLipRaise", "lipCornerDepressor", "chinRaise", "lipPucker", "lipPress",
     "lipSuck", "mouthOpen", "smirk", "eyeClosure"};
 
 std::vector<std::string> emotions{"joy", "fear", "disgust", "sadness", "anger", "surprise", "contempt","valence", "engagement" };
-//
+
+std::map< std::string, ofImage > expression_image_lookup;
 
 Face f;
 int no_faces;
 
 int vocals_count = 0;
 
-
 std::map<FaceId,Face> facesMap;
+
+/** Sample ordered random list of expressions */
+std::vector<std::string> random_sample( const std::vector<std::string>& src_list, const int n=5 );
 
 void ofApp::onImageResults(std::map<FaceId,Face> faces, Frame image){
 
@@ -81,14 +93,21 @@ void ofApp::setup(){
     myfont.load("Helvetica.ttf", 12);
     myfontLarge.load("Helvetica.ttf", 32);
     //ofSetDataPathRoot("../Resources/data/");
-    
+	
+	// Setup the game objectives
+	expression_objective = random_sample( possible_expression_objectives, 5 );
+	player1_objective = std::vector< bool >( expression_objective.size(), true );
+	player2_objective = std::vector< bool >( expression_objective.size(), true );
+	player1_index = 0;
+	player2_index = 0;
+	
     try
     {
-        std::string affdexLicense = "{\"token\":\"fb33ef9bfb195dac7a5c0b286633084df80974ecc9b36aae39ca3ba56921f815\",\"licensor\":\"Affectiva Inc.\",\"expires\":\"2099-01-01\",\"developerId\":\"Affectiva-internal\",\"software\":\"Affdex SDK\"}";
+        std::string affdexLicense = "{\"token\":\"\",\"licensor\":\"Affectiva Inc.\",\"expires\":\"2099-01-01\",\"developerId\":\"Affectiva-internal\",\"software\":\"Affdex SDK\"}";
 
-        //path DATA_FOLDER = "/Users/dmcduff/src/affdexface/data";
+//        path DATA_FOLDER = "data";
+		//path DATA_FOLDER = "/Users/dmcduff/src/of_v20150910_osx_release/apps/myApps/affectiva-hackathon_rev02/bin/data/affdex-windows-sdk-iOS/data";
         path DATA_FOLDER = "/Users/dmcduff/src/of_v20150910_osx_release/apps/myApps/affectiva-hackathon_rev02/bin/data/affdex-windows-sdk-iOS/data";
-        ///path DATA_FOLDER = "/Users/dmcduff/src/of_v20150910_osx_release/apps/myApps/emotionlab-hackathon/affdex-native/data";
 
         const std::vector<int> DEFAULT_RESOLUTION{ 640, 480 };
         std::vector<int> resolution;
@@ -121,7 +140,19 @@ void ofApp::setup(){
         std::cerr << "An Exception occurred: " << exception.getExceptionMessage() << std::endl;
     }
     
+    browFurrowImg.load("images/browFurrow.png");
+    browRaiseImg.load("images/browRaise.png");
+    lipDepressorImg.load("images/lipDepressor.png");
+    lipPuckerImg.load("images/lipPucker.png");
+    smileImg.load("images/smile.png");
+    smirkImg.load("images/smirk.png");
     
+    expression_image_lookup[ "smile" ] = smileImg;
+    expression_image_lookup[ "smirk" ] = smirkImg;
+    expression_image_lookup[ "lipPucker" ] = lipPuckerImg;
+    expression_image_lookup[ "lipCornerDepressor" ] = lipDepressorImg;
+    expression_image_lookup[ "browFurrow" ] = browFurrowImg;
+    expression_image_lookup[ "browRaise" ] = browRaiseImg;
 
     
 }
@@ -140,6 +171,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
+    //currentFrame.flipPixels(imgdata.get(), true, false);
+    //`currentFrame.fli
     
     imgdataMutex.lock();
     currentFrame.setFromPixels(imgdata.get(), imgWidth, imgHeight, ofImageType::OF_IMAGE_COLOR, false);
@@ -151,6 +184,7 @@ void ofApp::draw(){
     float heightRecal = float(imgHeight)/float(windowHeight);
     
     currentFrame.resize(windowWidth,windowHeight);
+    currentFrame.mirror(false,true);
     currentFrame.draw(0,0);
     
     ofSetColor(255);
@@ -204,17 +238,17 @@ void ofApp::draw(){
             
             if(count==5){
                 //ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
-                face_x1 = point.x/widthRecal;
+                face_x1 = windowWidth-point.x/widthRecal;
                 face_y1 = point.y/heightRecal;
             }
             else if(count==10){
                 //ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
-                face_x2 = point.x/widthRecal;
+                face_x2 = windowWidth-point.x/widthRecal;
                 face_y2 = point.y/heightRecal;
             }
             else if(count==2){
                 //ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
-                face_x3 = point.x/widthRecal;
+                face_x3 = windowWidth-point.x/widthRecal;
                 face_y3 = point.y/heightRecal;
             }
             
@@ -229,7 +263,10 @@ void ofApp::draw(){
             count++;
             
         }
-        if(face_x1<windowWidth/2){
+		
+		// Determine player and perform player specific logic
+		const bool is_player1 = face_x1 < windowWidth/2;
+		if( is_player1 ){
             ofSetColor(255,0,0);
         }
         else{
@@ -239,29 +276,35 @@ void ofApp::draw(){
         
         count=0;
         
+		// Update objective vector for players and stop on end of game
+		int& player_index = is_player1 ? player1_index : player2_index;
+		std::vector< bool >& player_objective = is_player1 ? player1_objective : player2_objective;
+		const std::string& target_expression = expression_objective[ player_index ];
+		
+		if( player_objective.back())   // Handle 2-player mode
+		{
+			values = (float *)&f.expressions;
+			for( string expression : expressions )
+			{
+				// For objective for this player for this frame
+				if( expression == target_expression && *values >= 90.0f )
+				{
+					player_objective[player_index] = false;
+					player_index++;
+					break;
+				}
+				values++;
+			}
+		}
+		
+		// Drawing & display code
+		values = (float *)&f.expressions;
         int line_height = myfont.getLineHeight();
-        
-        
         for (string expression : expressions)
         {
             if(expression=="smirk"){
                 smirk_value = smirk_value + int(*values);
             }
-            
-            //Shock 50%
-            //https://pavlok.herokuapp.com/api/YAjnVJWw1z/shock/128
-            
-            //Vibrate 50%
-            //https://pavlok.herokuapp.com/api/YAjnVJWw1z/vibro/160
-            
-            //Shock 100%
-            //https://pavlok.herokuapp.com/api/YAjnVJWw1z/shock/255
-            
-            //Vibrate 100%
-            //https://pavlok.herokuapp.com/api/YAjnVJWw1z/vibro/255
-            
-            //Vibrate 100%
-            //https://pavlok.herokuapp.com/api/YAjnVJWw1z/beep/255
 
             ofSetColor(255);
             int round_val = round(*values/10);
@@ -393,8 +436,35 @@ void ofApp::draw(){
         nums_smoothed[i] = nums_smoothed[i]/smoothing_int;
     }
     
+    ofSetColor(255);
+    for( unsigned int i_obj = 0; i_obj < expression_objective.size(); i_obj++ )
+    {
+        ofImage& im = expression_image_lookup[ expression_objective[ i_obj ] ];
+        ofSetColor( 255, 255, 255, player1_objective[i_obj]? 255 : 50 );
+        im.draw(20, 100+i_obj*100, 100,100);
+        
+        ofSetColor( 255, 255, 255, player2_objective[i_obj]? 255 : 50 );
+        im.draw(windowWidth/2+20, 100+i_obj*100, 100,100);
+    }
     
-
+	// Check for win-conditions
+	if( player1_objective.back() == false && player2_objective.back() == false )
+	{
+		// TIE
+		std::cout << "TIE GAME!!!!" << std::endl;
+	}
+	else if (player1_objective.back() == false )
+	{
+		// Player 1 wins
+		std::cout << "Player 1 wins!!!" << std::endl;
+        pavlokEvent(1);
+	}
+	else if (player2_objective.back() == false )
+	{
+		// Player 2 wins
+		std::cout << "Player 2 wins!!!" << std::endl;
+        pavlokEvent(2);
+	}
 
 }
 
@@ -488,21 +558,21 @@ string ofApp::mapExpressionName(string expression){
     
     else{}
 
-std::vector<std::string> emotions{"joy", "fear", "disgust", "sadness", "anger", "surprise", "contempt", "valence", "engagement" };
 
     return new_expression;
 }
 
-void ofApp::pavlokEvent()
+std::vector<std::string> random_sample( const std::vector<std::string>& src_list, const int n )
 {
-    if(smirk_value>90){
-        ofHttpResponse resp = ofLoadURL("https://pavlok.herokuapp.com/api/YAjnVJWw1z/vibro/160");
-        cout << resp.data << endl;
-    }
-    
-    
-    if(smirk_value>90){
-        ofHttpResponse resp = ofLoadURL("https://pavlok.herokuapp.com/api/jhn3gGBxgN/vibro/160");
-        cout << resp.data << endl;
-    }
+	const int n_sample = src_list.size() < n? src_list.size() : n;
+	std::vector<std::string> shuffled_list = src_list;
+	std::random_device rd;
+	std::mt19937 g(rd());
+	std::shuffle( shuffled_list.begin(), shuffled_list.end(), g );
+	return std::vector< std::string >( shuffled_list.begin(), shuffled_list.begin() + n_sample );
+}
+
+void ofApp::pavlokEvent(int player_no)
+{
+
 }
