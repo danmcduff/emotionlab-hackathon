@@ -75,10 +75,4 @@ class ofApp : public ofBaseApp, public affdex::ImageListener{
         vector<float> nums_smoothed;
 
     
-        ofSoundPlayer  beats;
-        ofSoundPlayer  synth;
-        ofSoundPlayer  vocals;
-        ofSoundPlayer  dog;
-        ofSoundPlayer  trumpet;
-    
 };

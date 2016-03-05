@@ -34,6 +34,9 @@ auto start_time = std::chrono::system_clock::now();
 float head_motion = -1.0f;
 float temp_x = -1.0f;
 
+bool Player_1_objective;
+bool Player_2_objective;
+
 std::vector<std::string> expressions{"smile", "innerBrowRaise", "browRaise", "browFurrow" , "noseWrinkle",
     "upperLipRaise", "lipCornerDepressor", "chinRaise", "lipPucker", "lipPress",
     "lipSuck", "mouthOpen", "smirk", "eyeClosure"};
@@ -151,6 +154,14 @@ void ofApp::draw(){
     currentFrame.draw(0,0);
     
     ofSetColor(255);
+    ofFill();
+    ofRect(windowWidth/2, 0,10,windowHeight);
+    ofNoFill();
+    
+    string player_1 = "Player 1";
+    string player_2 = "Player 2";
+    myfontLarge.drawString(player_1, 20, 50);
+    myfontLarge.drawString(player_2, 20+windowWidth/2, 50);
     
     int facesSize = facesMap.size();
     std::cout << "No. of faces: " << facesSize << std::endl;
@@ -178,15 +189,28 @@ void ofApp::draw(){
         for (auto& point : points)	//Draw face feature points.
         {
             
-            
-            ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
             if(count==5){
+                float face_x1 = point.x;
+                float face_y1 = point.y;
+            }
+            else if(count==10){
+                float face_x2 = point.x;
+                float face_y2 = point.y;
+            }
+            else if(count==2){
+                
+            }
+            ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
+
+            
+            if(count==5){
+                ofCircle(point.x/widthRecal, point.y/heightRecal, 3.0f);
+
                 head_motion = (point.y-temp_x)*(point.y-temp_x);
                 prev_x = point.x;
                 prev_y = point.y;
                 temp_x = point.y;
             }
-            count++;
             
         }
         
@@ -226,20 +250,20 @@ void ofApp::draw(){
                 ofSetColor(255);
             }
             string new_expression = mapExpressionName(expression);
-            myfont.drawString(new_expression + ": " , (prev_x+inter_oc+80)/widthRecal, (prev_y+line_height*count)/heightRecal);
+            //myfont.drawString(new_expression + ": " , (prev_x+inter_oc+80)/widthRecal, (prev_y+line_height*count)/heightRecal);
             
             
             for (int j=0; j<10; j++)
             {
                 ofSetColor(255,50);
                 ofFill();
-                ofRect((prev_x+inter_oc+80 - (j+2)*7)/widthRecal, (prev_y+line_height*count-5)/heightRecal,5/widthRecal,5/widthRecal);
+                //ofRect((prev_x+inter_oc+80 - (j+2)*7)/widthRecal, (prev_y+line_height*count-5)/heightRecal,5/widthRecal,5/widthRecal);
             }
             for (int j=0; j<round_val; j++)
             {
                 ofSetColor(255);
                 ofFill();
-                ofRect((prev_x+inter_oc+80 - (j+2)*7)/widthRecal, (prev_y+line_height*count-5)/heightRecal,5/widthRecal,5/widthRecal);
+                //ofRect((prev_x+inter_oc+80 - (j+2)*7)/widthRecal, (prev_y+line_height*count-5)/heightRecal,5/widthRecal,5/widthRecal);
             }
             
             count++;
@@ -270,7 +294,7 @@ void ofApp::draw(){
                 else{
                     ofSetColor(255);
                 }
-                myfont.drawString(str, (prev_x-string_width-80)/widthRecal, (prev_y+line_height*count)/heightRecal);
+                //myfont.drawString(str, (prev_x-string_width-80)/widthRecal, (prev_y+line_height*count)/heightRecal);
 
                 ofSetColor(255);
                 
@@ -278,13 +302,13 @@ void ofApp::draw(){
                 {
                     ofSetColor(255,100);
                     ofFill();
-                    ofRect((prev_x-80 + (j+2)*7)/widthRecal, (prev_y+line_height*count-5)/heightRecal,5/widthRecal,5/widthRecal);
+                    //ofRect((prev_x-80 + (j+2)*7)/widthRecal, (prev_y+line_height*count-5)/heightRecal,5/widthRecal,5/widthRecal);
                 }
                 for (int j=0; j<round_val; j++)
                 {
                     ofSetColor(255);
                     ofFill();
-                    ofRect((prev_x-80 + (j+2)*7)/widthRecal, (prev_y+line_height*count-5)/heightRecal,5/widthRecal,5/widthRecal);
+                    //ofRect((prev_x-80 + (j+2)*7)/widthRecal, (prev_y+line_height*count-5)/heightRecal,5/widthRecal,5/widthRecal);
                     ofSetColor(255);
                 }
                 ofSetColor(255);
@@ -455,7 +479,7 @@ void ofApp::pavlokEvent()
     
     
     if(smirk_value>90){
-        ofHttpResponse resp = ofLoadURL("https://pavlok.herokuapp.com/api/63MwGaUSzm/vibro/160");
+        ofHttpResponse resp = ofLoadURL("https://pavlok.herokuapp.com/api/jhn3gGBxgN/vibro/160");
         cout << resp.data << endl;
     }
 }
