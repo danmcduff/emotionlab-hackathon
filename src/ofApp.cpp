@@ -44,6 +44,9 @@ std::vector< std::string> expression_objective;
 int player1_index = -1;
 int player2_index = -1;
 
+bool endGame = false;
+int winning_player = 0;
+
 std::vector<std::string> possible_expression_objectives{"smile", "browRaise", "browFurrow" , "lipCornerDepressor", "smirk", "lipPucker"};
 
 std::vector<std::string> expressions{"smile", "innerBrowRaise", "browRaise", "browFurrow" , "noseWrinkle",
@@ -92,6 +95,7 @@ void ofApp::setup(){
     
     myfont.load("Helvetica.ttf", 12);
     myfontLarge.load("Helvetica.ttf", 32);
+    myfontXLarge.load("Helvetica.ttf", 100);
     //ofSetDataPathRoot("../Resources/data/");
 	
 	// Setup the game objectives
@@ -447,24 +451,40 @@ void ofApp::draw(){
         im.draw(windowWidth/2+20, 100+i_obj*100, 100,100);
     }
     
-	// Check for win-conditions
-	if( player1_objective.back() == false && player2_objective.back() == false )
+	// Check for win-conditions&&
+	if( player1_objective.back() == false && player2_objective.back() == false && endGame==true)
 	{
 		// TIE
 		std::cout << "TIE GAME!!!!" << std::endl;
 	}
-	else if (player1_objective.back() == false )
+	else if (player1_objective.back() == false && endGame==false)
 	{
 		// Player 1 wins
 		std::cout << "Player 1 wins!!!" << std::endl;
         pavlokEvent(1);
+        winning_player=1;
+        string winner_string = "WINNER!";
+        endGame=true;
 	}
-	else if (player2_objective.back() == false )
+	else if (player2_objective.back() == false && endGame==false)
 	{
 		// Player 2 wins
 		std::cout << "Player 2 wins!!!" << std::endl;
         pavlokEvent(2);
+        winning_player=2;
+        endGame=true;
 	}
+    
+    string winner_string = "WINNER!";
+    ofSetColor(255);
+    if(winning_player==1)
+    {
+        myfontXLarge.drawString(winner_string, 20,windowHeight/2);
+    }
+    else if(winning_player==2)
+    {
+        myfontXLarge.drawString(winner_string, windowWidth/2+20,windowHeight/2);
+    }
 
 }
 

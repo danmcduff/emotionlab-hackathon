@@ -60,6 +60,7 @@ class ofApp : public ofBaseApp, public affdex::ImageListener{
     
         ofTrueTypeFont myfont;
         ofTrueTypeFont myfontLarge;
+        ofTrueTypeFont myfontXLarge;
         string x;
         int smile_value;
         int brow_value;
