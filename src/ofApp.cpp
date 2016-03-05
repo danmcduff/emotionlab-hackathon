@@ -92,7 +92,8 @@ void ofApp::setup(){
     expression_image_lookup[ "browRaise" ].load("images/browRaise.png");
     expression_image_lookup[ "mouthOpen" ].load("images/mouthOpen.png");
     expression_image_lookup[ "eyeClosure" ].load("images/eyeClosure.png");
-	
+
+    startNewGame();
     try
     {
         std::string affdexLicense = "{\"token\":\"\",\"licensor\":\"Affectiva Inc.\",\"expires\":\"2099-01-01\",\"developerId\":\"Affectiva-internal\",\"software\":\"Affdex SDK\"}";
