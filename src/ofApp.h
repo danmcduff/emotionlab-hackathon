@@ -73,13 +73,15 @@ class ofApp : public ofBaseApp, public affdex::ImageListener{
     
         vector<float> nums;
         vector<float> nums_smoothed;
+	
+        std::vector< bool > player1_objective;
+        std::vector< bool > player2_objective;
+        std::vector< std::string> expression_objective;
+        int player1_index = -1;
+        int player2_index = -1;
+
+        std::map< std::string, ofImage > expression_image_lookup;
     
-        ofImage browFurrowImg;
-        ofImage browRaiseImg;
-        ofImage lipDepressorImg;
-        ofImage smirkImg;
-        ofImage lipPuckerImg;
-        ofImage smileImg;
 
     
 };

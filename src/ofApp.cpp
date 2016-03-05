@@ -35,24 +35,11 @@ auto start_time = std::chrono::system_clock::now();
 float head_motion = -1.0f;
 float temp_x = -1.0f;
 
-bool Player_1_objective;
-bool Player_2_objective;
-
-std::vector< bool > player1_objective;
-std::vector< bool > player2_objective;
-std::vector< std::string> expression_objective;
-int player1_index = -1;
-int player2_index = -1;
-
-std::vector<std::string> possible_expression_objectives{"smile", "browRaise", "browFurrow" , "lipCornerDepressor", "smirk", "lipPucker"};
-
 std::vector<std::string> expressions{"smile", "innerBrowRaise", "browRaise", "browFurrow" , "noseWrinkle",
     "upperLipRaise", "lipCornerDepressor", "chinRaise", "lipPucker", "lipPress",
     "lipSuck", "mouthOpen", "smirk", "eyeClosure"};
 
 std::vector<std::string> emotions{"joy", "fear", "disgust", "sadness", "anger", "surprise", "contempt","valence", "engagement" };
-
-std::map< std::string, ofImage > expression_image_lookup;
 
 Face f;
 int no_faces;
@@ -95,7 +82,22 @@ void ofApp::setup(){
     //ofSetDataPathRoot("../Resources/data/");
 	
 	// Setup the game objectives
-	expression_objective = random_sample( possible_expression_objectives, 5 );
+    expression_image_lookup.clear();
+    expression_image_lookup[ "smile" ].load("images/smile.png");
+    expression_image_lookup[ "smirk" ].load("images/smirk.png");
+    expression_image_lookup[ "lipPucker" ].load("images/lipPucker.png");
+    expression_image_lookup[ "lipCornerDepressor" ].load("images/lipDepressor.png");
+    expression_image_lookup[ "browFurrow" ].load("images/browFurrow.png");
+    expression_image_lookup[ "browRaise" ].load("images/browRaise.png");
+    expression_image_lookup[ "mouthOpen" ].load("images/mouthOpen.png");
+    expression_image_lookup[ "eyeClosure" ].load("images/eyeClosure.png");
+
+    std::vector<std::string> possible_expression_objectives;
+    for( const auto& exp_lookup_pair : expression_image_lookup )
+    {
+        possible_expression_objectives.push_back( exp_lookup_pair.first );
+    }
+	expression_objective = random_sample( possible_expression_objectives, 7 );
 	player1_objective = std::vector< bool >( expression_objective.size(), true );
 	player2_objective = std::vector< bool >( expression_objective.size(), true );
 	player1_index = 0;
@@ -139,22 +141,6 @@ void ofApp::setup(){
     {
         std::cerr << "An Exception occurred: " << exception.getExceptionMessage() << std::endl;
     }
-    
-    browFurrowImg.load("images/browFurrow.png");
-    browRaiseImg.load("images/browRaise.png");
-    lipDepressorImg.load("images/lipDepressor.png");
-    lipPuckerImg.load("images/lipPucker.png");
-    smileImg.load("images/smile.png");
-    smirkImg.load("images/smirk.png");
-    
-    expression_image_lookup[ "smile" ] = smileImg;
-    expression_image_lookup[ "smirk" ] = smirkImg;
-    expression_image_lookup[ "lipPucker" ] = lipPuckerImg;
-    expression_image_lookup[ "lipCornerDepressor" ] = lipDepressorImg;
-    expression_image_lookup[ "browFurrow" ] = browFurrowImg;
-    expression_image_lookup[ "browRaise" ] = browRaiseImg;
-
-    
 }
 
 //--------------------------------------------------------------
@@ -265,7 +251,7 @@ void ofApp::draw(){
         }
 		
 		// Determine player and perform player specific logic
-		const bool is_player1 = face_x1 < windowWidth/2;
+		const bool is_player1 = (face_x1+face_x2+face_x3)/3.0f < windowWidth/2;
 		if( is_player1 ){
             ofSetColor(255,0,0);
         }
