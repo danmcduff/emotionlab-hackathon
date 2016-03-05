@@ -49,6 +49,7 @@ class ofApp : public ofBaseApp, public affdex::ImageListener{
     
         string mapExpressionName(string expression);
         void pavlokEvent(int player_no);
+        void startNewGame();
     
         shared_ptr<CameraDetector> detector;
         shared_ptr<ImageListener> listenPtr;
@@ -83,6 +84,10 @@ class ofApp : public ofBaseApp, public affdex::ImageListener{
 
         std::map< std::string, ofImage > expression_image_lookup;
     
-
+        int windowWidth;
+        int windowHeight;
+    
+    bool endGame;
+    int winning_player;
     
 };

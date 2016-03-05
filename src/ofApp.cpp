@@ -35,9 +35,6 @@ auto start_time = std::chrono::system_clock::now();
 float head_motion = -1.0f;
 float temp_x = -1.0f;
 
-bool endGame = false;
-int winning_player = 0;
-
 std::vector<std::string> expressions{"smile", "innerBrowRaise", "browRaise", "browFurrow" , "noseWrinkle",
     "upperLipRaise", "lipCornerDepressor", "chinRaise", "lipPucker", "lipPress",
     "lipSuck", "mouthOpen", "smirk", "eyeClosure"};
@@ -95,17 +92,6 @@ void ofApp::setup(){
     expression_image_lookup[ "browRaise" ].load("images/browRaise.png");
     expression_image_lookup[ "mouthOpen" ].load("images/mouthOpen.png");
     expression_image_lookup[ "eyeClosure" ].load("images/eyeClosure.png");
-
-    std::vector<std::string> possible_expression_objectives;
-    for( const auto& exp_lookup_pair : expression_image_lookup )
-    {
-        possible_expression_objectives.push_back( exp_lookup_pair.first );
-    }
-	expression_objective = random_sample( possible_expression_objectives, 7 );
-	player1_objective = std::vector< bool >( expression_objective.size(), true );
-	player2_objective = std::vector< bool >( expression_objective.size(), true );
-	player1_index = 0;
-	player2_index = 0;
 	
     try
     {
@@ -114,6 +100,8 @@ void ofApp::setup(){
 //        path DATA_FOLDER = "data";
 		//path DATA_FOLDER = "/Users/dmcduff/src/of_v20150910_osx_release/apps/myApps/affectiva-hackathon_rev02/bin/data/affdex-windows-sdk-iOS/data";
         path DATA_FOLDER = "/Users/dmcduff/src/of_v20150910_osx_release/apps/myApps/affectiva-hackathon_rev02/bin/data/affdex-windows-sdk-iOS/data";
+        
+        startNewGame();
 
         const std::vector<int> DEFAULT_RESOLUTION{ 640, 480 };
         std::vector<int> resolution;
@@ -168,9 +156,9 @@ void ofApp::draw(){
     currentFrame.setFromPixels(imgdata.get(), imgWidth, imgHeight, ofImageType::OF_IMAGE_COLOR, false);
     imgdataMutex.unlock();
     
-    int windowWidth =  ofGetWidth();
+    windowWidth =  ofGetWidth();
     float widthRecal = float(imgWidth)/float(windowWidth);
-    int windowHeight = ofGetHeight();
+    windowHeight = ofGetHeight();
     float heightRecal = float(imgHeight)/float(windowHeight);
     
     currentFrame.resize(windowWidth,windowHeight);
@@ -471,6 +459,17 @@ void ofApp::draw(){
     {
         myfontXLarge.drawString(winner_string, windowWidth/2+20,windowHeight/2);
     }
+    
+    if(endGame==true){
+        ofSetColor(0,255,0);
+        ofFill();
+        ofRect(windowWidth/2-200, windowHeight/2-100, 400, 200);
+        ofSetColor(255);
+        string reply_text = "Play Again!";
+        myfontLarge.drawString(reply_text, windowWidth/2-100, windowHeight/2+10);
+        ofSetColor(255);
+        ofNoFill();
+    }
 
 }
 
@@ -501,6 +500,9 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+    if(x>windowWidth/2-200 && x<windowWidth/2-200+400 && y>windowHeight/2-100 && y<windowWidth/2){
+        startNewGame();
+    }
 }
 
 //--------------------------------------------------------------
@@ -580,4 +582,22 @@ std::vector<std::string> random_sample( const std::vector<std::string>& src_list
 
 void ofApp::pavlokEvent(int player_no)
 {
+
+}
+
+void ofApp::startNewGame()
+{
+    std::vector<std::string> possible_expression_objectives;
+    for( const auto& exp_lookup_pair : expression_image_lookup )
+    {
+        possible_expression_objectives.push_back( exp_lookup_pair.first );
+    }
+    expression_objective = random_sample( possible_expression_objectives, 7 );
+    player1_objective = std::vector< bool >( expression_objective.size(), true );
+    player2_objective = std::vector< bool >( expression_objective.size(), true );
+    player1_index = 0;
+    player2_index = 0;
+    
+    endGame = false;
+    winning_player = 0;
 }
