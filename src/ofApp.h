@@ -90,4 +90,7 @@ class ofApp : public ofBaseApp, public affdex::ImageListener{
     bool endGame;
     int winning_player;
     
+    ofImage replay_button;
+    ofImage shock_button;
+    
 };

@@ -48,6 +48,8 @@ int vocals_count = 0;
 
 std::map<FaceId,Face> facesMap;
 
+bool shock_flag = false;
+
 /** Sample ordered random list of expressions */
 std::vector<std::string> random_sample( const std::vector<std::string>& src_list, const int n=5 );
 
@@ -92,6 +94,9 @@ void ofApp::setup(){
     expression_image_lookup[ "browRaise" ].load("images/browRaise.png");
     expression_image_lookup[ "mouthOpen" ].load("images/mouthOpen.png");
     expression_image_lookup[ "eyeClosure" ].load("images/eyeClosure.png");
+    
+    replay_button.load("images/replay_button.png");
+    shock_button.load("images/shock_button.png");
 
     startNewGame();
     try
@@ -134,6 +139,8 @@ void ofApp::setup(){
     {
         std::cerr << "An Exception occurred: " << exception.getExceptionMessage() << std::endl;
     }
+    
+    
 }
 
 //--------------------------------------------------------------
@@ -165,6 +172,15 @@ void ofApp::draw(){
     currentFrame.resize(windowWidth,windowHeight);
     currentFrame.mirror(false,true);
     currentFrame.draw(0,0);
+    
+    if(shock_flag==false){
+        ofSetColor(255,50);
+    }
+    else{
+        ofSetColor(255);
+    }
+    shock_button.draw(windowWidth-120, 20, 100,100);
+    ofSetColor(255);
     
     ofSetColor(255);
     ofFill();
@@ -454,22 +470,30 @@ void ofApp::draw(){
     ofSetColor(255);
     if(winning_player==1)
     {
-        myfontXLarge.drawString(winner_string, 20,windowHeight/2);
+        ofFill();
+        ofSetColor(255,70);
+        ofRect(windowWidth/2,0,windowWidth/2,windowHeight);
+        //myfontXLarge.drawString(winner_string, 20,windowHeight/2);
     }
     else if(winning_player==2)
     {
-        myfontXLarge.drawString(winner_string, windowWidth/2+20,windowHeight/2);
+        ofFill();
+        ofSetColor(255,100);
+        ofRect(0,0,windowWidth/2,windowHeight);
+        //myfontXLarge.drawString(winner_string, windowWidth/2+20,windowHeight/2);
     }
+    ofSetColor(255);
     
     if(endGame==true){
-        ofSetColor(0,255,0);
-        ofFill();
-        ofRect(windowWidth/2-200, windowHeight/2-100, 400, 200);
+        replay_button.draw(windowWidth/2-200, windowHeight/2-200, 400, 400);
+        //ofSetColor(0,255,0);
+        //ofFill();
+        //ofRect(windowWidth/2-200, windowHeight/2-100, 400, 200);
+        //ofSetColor(255);
+        //string reply_text = "Play Again!";
+        //myfontLarge.drawString(reply_text, windowWidth/2-100, windowHeight/2+10);
         ofSetColor(255);
-        string reply_text = "Play Again!";
-        myfontLarge.drawString(reply_text, windowWidth/2-100, windowHeight/2+10);
-        ofSetColor(255);
-        ofNoFill();
+        //ofNoFill();
     }
 
 }
@@ -501,8 +525,15 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    if(x>windowWidth/2-200 && x<windowWidth/2-200+400 && y>windowHeight/2-100 && y<windowWidth/2){
+    if(x>windowWidth/2-200 && x<windowWidth/2-200+400 && y>windowHeight/2-200 && y<windowHeight/2+200){
         startNewGame();
+    }
+    
+    if(x>windowWidth-120 && x<windowWidth-20 && y>20 && y<120 && shock_flag==false){
+        shock_flag = true;
+    }
+    else if(x>windowWidth-120 && x<windowWidth-20 && y>20 && y<120 && shock_flag==true){
+        shock_flag = false;
     }
 }
 
@@ -583,6 +614,7 @@ std::vector<std::string> random_sample( const std::vector<std::string>& src_list
 
 void ofApp::pavlokEvent(int player_no)
 {
+
 
 }
 
