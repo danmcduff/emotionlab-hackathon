@@ -93,4 +93,6 @@ class ofApp : public ofBaseApp, public affdex::ImageListener{
     ofImage replay_button;
     ofImage shock_button;
     
+    ofImage     screenshot_img;
+    
 };
