@@ -436,10 +436,10 @@ void ofApp::draw(){
     {
         ofImage& im = expression_image_lookup[ expression_objective[ i_obj ] ];
         ofSetColor( 255, 255, 255, player1_objective[i_obj]? 255 : 50 );
-        im.draw(20, 100+i_obj*100, 100,100);
+        im.draw(20, 100+i_obj*50, 100,100);
         
         ofSetColor( 255, 255, 255, player2_objective[i_obj]? 255 : 50 );
-        im.draw(windowWidth/2+20, 100+i_obj*100, 100,100);
+        im.draw(windowWidth/2+20, 100+i_obj*50, 100,100);
     }
     
 	// Check for win-conditions&&
@@ -604,12 +604,20 @@ string ofApp::mapExpressionName(string expression){
 
 std::vector<std::string> random_sample( const std::vector<std::string>& src_list, const int n )
 {
-	const int n_sample = src_list.size() < n? src_list.size() : n;
-	std::vector<std::string> shuffled_list = src_list;
-	std::random_device rd;
-	std::mt19937 g(rd());
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::vector<std::string> shuffled_list = src_list;
 	std::shuffle( shuffled_list.begin(), shuffled_list.end(), g );
-	return std::vector< std::string >( shuffled_list.begin(), shuffled_list.begin() + n_sample );
+    if( n > src_list.size() )
+    {
+        std::vector<std::string> sample_remainder = random_sample( src_list, n-src_list.size());
+        shuffled_list.insert( shuffled_list.end(), sample_remainder.begin(), sample_remainder.end());
+    }
+    else
+    {
+        shuffled_list.resize( n );
+    }
+    return shuffled_list;
 }
 
 void ofApp::pavlokEvent(int player_no)
@@ -625,7 +633,7 @@ void ofApp::startNewGame()
     {
         possible_expression_objectives.push_back( exp_lookup_pair.first );
     }
-    expression_objective = random_sample( possible_expression_objectives, 7 );
+    expression_objective = random_sample( possible_expression_objectives, 3 );
     player1_objective = std::vector< bool >( expression_objective.size(), true );
     player2_objective = std::vector< bool >( expression_objective.size(), true );
     player1_index = 0;
