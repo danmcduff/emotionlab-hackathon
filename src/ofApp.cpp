@@ -447,6 +447,9 @@ void ofApp::draw(){
 	{
 		// TIE
 		std::cout << "TIE GAME!!!!" << std::endl;
+        ofSetColor(255);
+        screenshot_img.draw(0,0);
+        ofSetColor(255);
 	}
 	else if (player1_objective.back() == false && endGame==false)
 	{
@@ -456,6 +459,10 @@ void ofApp::draw(){
         winning_player=1;
         string winner_string = "WINNER!";
         endGame=true;
+        
+        string timestamp = ofGetTimestampString();
+        screenshot_img.grabScreen(0, 0 , ofGetWidth(), ofGetHeight());
+        screenshot_img.save("screenshots/screenshot_"+timestamp+".png");
 	}
 	else if (player2_objective.back() == false && endGame==false)
 	{
@@ -464,7 +471,16 @@ void ofApp::draw(){
         pavlokEvent(2);
         winning_player=2;
         endGame=true;
+        
+        string timestamp = ofGetTimestampString();
+        screenshot_img.grabScreen(0, 0 , ofGetWidth(), ofGetHeight());
+        screenshot_img.save("screenshots/screenshot_"+timestamp+".png");
 	}
+    else if (endGame==true){
+        ofSetColor(255);
+        screenshot_img.draw(0,0);
+        ofSetColor(255);
+    }
     
     string winner_string = "WINNER!";
     ofSetColor(255);
