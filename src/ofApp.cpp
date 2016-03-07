@@ -17,7 +17,7 @@
 #include "typedefs.h"
 
 //#include <opencv2/highgui/highgui.hpp>
-//#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 int index2 = 0;
 
@@ -63,6 +63,8 @@ void ofApp::onImageResults(std::map<FaceId,Face> faces, Frame image){
     imgHeight = image.getHeight();
     imgdataMutex.lock();
     imgdata = image.getBGRByteArray();
+    cv::Mat im( imgHeight, imgWidth, CV_8UC3, imgdata.get());
+    cv::cvtColor( im, im, CV_BGR2RGB);
     imgdataMutex.unlock();
     int cnt=0;
     
@@ -171,6 +173,7 @@ void ofApp::draw(){
     
     currentFrame.resize(windowWidth,windowHeight);
     currentFrame.mirror(false,true);
+    //ofSetColor(200,200,0);
     currentFrame.draw(0,0);
     
     if(shock_flag==false){
@@ -179,7 +182,7 @@ void ofApp::draw(){
     else{
         ofSetColor(255);
     }
-    shock_button.draw(windowWidth-120, 20, 100,100);
+    shock_button.draw(windowWidth-170, 50, 100,100);
     ofSetColor(255);
     
     ofSetColor(255);
@@ -191,9 +194,9 @@ void ofApp::draw(){
     string player_2 = "Player 2";
     
     ofSetColor(255,0,0);
-    myfontLarge.drawString(player_1, 20, 50);
+    myfontLarge.drawString(player_1, 50, 70);
     ofSetColor(0,0,255);
-    myfontLarge.drawString(player_2, 20+windowWidth/2, 50);
+    myfontLarge.drawString(player_2, 20+windowWidth/2, 70);
     ofSetColor(255);
     
     int facesSize = facesMap.size();
@@ -435,11 +438,17 @@ void ofApp::draw(){
     for( unsigned int i_obj = 0; i_obj < expression_objective.size(); i_obj++ )
     {
         ofImage& im = expression_image_lookup[ expression_objective[ i_obj ] ];
-        ofSetColor( 255, 255, 255, player1_objective[i_obj]? 255 : 50 );
-        im.draw(20, 100+i_obj*50, 100,100);
-        
-        ofSetColor( 255, 255, 255, player2_objective[i_obj]? 255 : 50 );
-        im.draw(windowWidth/2+20, 100+i_obj*50, 100,100);
+        bool is_current_obj = i_obj == player1_index;
+        ofSetColor( 255, 255, 255, is_current_obj ? 255 : 100 );
+        int x =50 + is_current_obj*50;
+        int y = 100+i_obj*(windowHeight-200) / expression_objective.size();
+        im.draw(x, y, 50 + is_current_obj*50,50+ is_current_obj*50);
+
+        is_current_obj = i_obj == player2_index;
+        ofSetColor( 255, 255, 255, is_current_obj ? 255 : 100 );
+        x =20 + is_current_obj*50 + windowWidth/2;
+        y = 100+i_obj*(windowHeight-200) / expression_objective.size();
+        im.draw(x, y, 50 + is_current_obj*50,50+ is_current_obj*50);
     }
     
 	// Check for win-conditions&&
@@ -541,15 +550,12 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    if(x>windowWidth/2-200 && x<windowWidth/2-200+400 && y>windowHeight/2-200 && y<windowHeight/2+200){
+    if(x>windowWidth/2-200 && x<windowWidth/2-200+400 && y>windowHeight/2-200 && y<windowHeight/2+200 && endGame==true){
         startNewGame();
     }
     
-    if(x>windowWidth-120 && x<windowWidth-20 && y>20 && y<120 && shock_flag==false){
-        shock_flag = true;
-    }
-    else if(x>windowWidth-120 && x<windowWidth-20 && y>20 && y<120 && shock_flag==true){
-        shock_flag = false;
+    if(x>windowWidth-120 && x<windowWidth-20 && y>20 && y<120 ){
+        shock_flag = shock_flag ^ true;
     }
 }
 
@@ -649,7 +655,7 @@ void ofApp::startNewGame()
     {
         possible_expression_objectives.push_back( exp_lookup_pair.first );
     }
-    expression_objective = random_sample( possible_expression_objectives, 3 );
+    expression_objective = random_sample( possible_expression_objectives, 35 );
     player1_objective = std::vector< bool >( expression_objective.size(), true );
     player2_objective = std::vector< bool >( expression_objective.size(), true );
     player1_index = 0;
